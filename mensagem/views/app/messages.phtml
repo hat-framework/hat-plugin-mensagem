@@ -1,7 +1,7 @@
-<div class="span12" ng-controller="usuario_mensagemCTRL">
-    <div class="span11 msg_container" ng-repeat="msg in messages" ng-class="{read:(msg.visualizada === 's'), unread:(msg.visualizada === 'n' && msg.from !== user.cod_usuario)}">
-        <div class="box-header"><a href="{{url}}/{{msg.cod_usuario}}" target="_BLANK">{{msg.from}}</a> - {{msg.data|fromNow}}</div>
-        <div class="box-content" ng-bind-html="msg.mensagem"></div>
+<div class="span12 list-group" ng-controller="usuario_mensagemCTRL">
+    <div class="span11 list-group-item" ng-repeat="msg in messages" ng-class="{read:(msg.visualizada === 's'), active:(msg.visualizada === 'n' && msg.from !== user.cod_usuario)}">
+        <div class="list-group-item-heading"><a href="{{url}}/{{msg.cod_usuario}}" target="_BLANK">{{msg.from}}</a> - {{msg.data|fromNow}}</div>
+        <div class="list-group-item-text" ng-bind-html="msg.mensagem"></div>
     </div>
     <br/>
     <button ng-click="getMessages()" ng-hide="hideButton()" class="span11">Mais mensagens</button>
