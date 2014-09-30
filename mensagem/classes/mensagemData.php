@@ -1,7 +1,7 @@
 <?php 
 class mensagem_mensagemData extends \classes\Model\DataModel{
-    public $dados  = array(
-         'cod' => array(
+    public $dados  = [
+         'cod' => [
 	    'name'     => 'Código',
 	    'type'     => 'int',
 	    'size'     => '20',
@@ -11,68 +11,68 @@ class mensagem_mensagemData extends \classes\Model\DataModel{
 	    'grid'    => true,
 	    'display' => true,
 	    'private' => true
-        ),
-        'from' => array(
+        ],
+        'from' => [
 	    'name'     => 'De',
 	    'type'     => 'int',
 	    'size'     => '11',
             'especial' => 'autentication',
-            'autentication' => array('needlogin' => true),
+            'autentication' => ['needlogin' => true],
 	    'notnull' => true,
 	    'grid'    => true,
 	    'display' => true,
-	    'fkey' => array(
+	    'fkey' => [
 	        'model' => 'usuario/login',
 	        'cardinalidade' => '1n',
-	        'keys' => array('cod_usuario', 'user_name'),
-	    ),
-        ),
-        'to' => array(
+	        'keys' => ['cod_usuario', 'user_name'],
+	    ],
+        ],
+        'to' => [
 	    'name'     => 'Para',
 	    'type'     => 'varchar',
 	    'size'     => '20',
 	    'notnull' => true,
 	    'grid'    => true,
 	    'display' => true,
-        ),
-        'data' => array(
+        ],
+        'data' => [
 	    'name'      => 'Data',
 	    'type'      => 'timestamp',
             'default'   => "CURRENT_TIMESTAMP",
             'especial'  => 'hide'
-        ),
-        'mensagem' => array(
+        ],
+        'mensagem' => [
 	    'name'     => 'Mensagem',
 	    'type'     => 'text',
             'especial' => 'editor',
             'notnull' => true,
 	    'grid'    => true,
 	    'display' => true,
-        ),
+        ],
         
-        'visualizada' => array(
+        'visualizada' => [
 	    'name'     => 'Visualizada',
 	    'type'     => 'enum',
             'default'  => 'n',
-            'options'  => array(
+            'options'  => [
                 's' => "Visualizada",
                 'n' => "Não"
-            ),
+            ],
             'notnull' => true,
 	    'grid'    => true,
 	    'display' => true,
-        ),
-        'notified' => array(
+        ],
+        'notified' => [
 	    'name'     => 'Notificada',
 	    'type'     => 'enum',
             'default'  => 'n',
-            'options'  => array(
+            'options'  => [
                 's' => "Notificada",
                 'n' => "Não"
-            ),
+            ],
             'notnull' => true,
 	    'grid'    => true,
 	    'display' => true,
-        ),
-        'button'     => array('button' => 'Enviar Mensagem'),);
+        ],
+        'button'     => ['button' => 'Enviar Mensagem'],];
 }

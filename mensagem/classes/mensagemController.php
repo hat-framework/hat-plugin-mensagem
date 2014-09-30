@@ -35,7 +35,7 @@ class mensagemController extends classes\Controller\CController{
     }
     
     public function conversa(){
-        if(!isset($this->vars[0]) || !isset($this->vars[1])){die(json_encode(array()));}
+        if(!isset($this->vars[0]) || !isset($this->vars[1])){die(json_encode([]));}
         $page = (isset($this->vars[2]))?$this->vars[2]:"0";
         $arr = $this->model->LoadUserTalk($this->vars[0], $this->vars[1], $page);
         $this->model->setRead($this->vars[1], $this->vars[0]);

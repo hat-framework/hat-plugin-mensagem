@@ -9,6 +9,13 @@ class mensagemActions extends Actions{
             'label'     => "Enviar e receber mensagens",
             'descricao' => "Permite que o usuário envie e receba mensagens pelo sistema",
             'default'   => 's',
+        ),
+        
+        'ModerarMensagems' => array(
+            'nome'      => "mensagem_manage",
+            'label'     => "Moderar Mensagens",
+            'descricao' => "Permite que o modere as mensagens enviadas pelos usuários do sistema",
+            'default'   => 's',
         )
     );
     
@@ -51,5 +58,17 @@ class mensagemActions extends Actions{
             'permission' => 'usuario_AC', 'needcod' => false,
         ),
 
+    );
+    
+    protected $perfis = array(
+        'Moderador' => array(
+            'cod'         => '20',
+            'nome'        => 'Moderador de Mensagens',
+            'default'     => '0',
+            'tipo'        => 'sistema',
+            'descricao'   => 'Perfil destinado aos Moderadores do sistema de mensagens. Eles terão acesso a todas as mensagens enviadas pelos usuários, e
+                              terão a opção de respondê-los. Assim como recebem notificações de novas mensagens ao acessar o sistema',
+            'permissions' => array('mensagem_manage' => 's')
+        ),
     );
 }

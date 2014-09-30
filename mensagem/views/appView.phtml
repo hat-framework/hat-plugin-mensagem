@@ -1,41 +1,36 @@
 <div class="span12" ng-app="usuario_messageApp">
     <?php 
-        
         $this->Html->LoadBowerComponent(array(
             'moment/min/moment.min','moment/locale/pt-br', 'tinymce/tinymce.min',
             'angular/angular.min', 'angular-sanitize/angular-sanitize.min', 
-            //'imperavi-redactor-widget/assets/redactor.min', 
             'redactor/redactor/redactor.min', 
             'hatframework-hatjs-form/redactor/fullscreen',
             'hatframework-hatjs-form/redactor/redactor.directive.min',
-            //'hatframework-hatjs-form/redactor/redactor',
-            //'angular-redactor/angular-redactor'
         ));
         $this->Html->LoadBowerComponentCss(array(
-            //'hatframework-hatjs-form/redactor/redactor.min',
             'redactor/redactor/redactor', 
-            //'imperavi-redactor-widget/assets/redactor'
         ));
         
-        $location = \classes\Classes\Registered::getPluginLocationUrl('mensagem')."/mensagem/js";
-        $this->Html->LoadJs(array(
+        $location = "/app/js";
+        $this->Html->LoadJs(array("lib/baseurl", 'lib/haturl'));
+        $this->Html->LoadPlugin('mensagem',array(
             "$location/app.js", "$location/sync.js",
             "$location/formulario.js", "$location/messages.js",
             "$location/users.js", "$location/talkWith.js",
-            "lib/baseurl", 'lib/haturl'
-        ), true);
+        ));
 
+        $dir = classes\Classes\Registered::getPluginLocation('mensagem', true).DS."app".DS."html";
     ?>
     <div class="span9 pull-right">
         <?php
-            require_once __DIR__.'/app/talkWith.phtml';
-            require_once __DIR__.'/app/formulario.phtml';
-            require_once __DIR__.'/app/messages.phtml';
+            require_once $dir.'/talkWith.phtml';
+            require_once $dir.'/formulario.phtml';
+            require_once $dir.'/messages.phtml';
         ?>
     </div>
     <div class="span3 hidden-phone" id='users_container'>
         <?php
-            require_once __DIR__.'/app/users.phtml';
+            require_once $dir.'/users.phtml';
         ?>
         
         <div ng-controller="usuario_mensagem_syncCTRL"></div>

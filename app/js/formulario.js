@@ -34,7 +34,9 @@ usuario_messageApp.controller('usuario_mensagem_formCTRL',['$scope','$http','$ro
             to       :$scope.user.cod_usuario, 
             mensagem :$scope.content, 
         };
-        $http.post(url, data).success(function(response) {/*console.log(response);*/});
+        $http.post(url, data).success(function(response) {
+            message_json(response);
+        });
         $scope.content = "";
     };
     
