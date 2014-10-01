@@ -35,7 +35,7 @@ usuario_messageApp.controller('usuario_mensagem_formCTRL',['$scope','$http','$ro
             mensagem :$scope.content, 
         };
         $http.post(url, data).success(function(response) {
-            message_json(response);
+            message_json(response, 3600);
         });
         $scope.content = "";
     };
