@@ -1,4 +1,4 @@
-<div class="span12" ng-app="usuario_messageApp">
+<div class="col-xs-12" ng-app="usuario_messageApp">
     <?php 
         $this->Html->LoadBowerComponent(array(
             'moment/min/moment.min','moment/locale/pt-br', 'tinymce/tinymce.min',
@@ -21,14 +21,14 @@
 
         $dir = classes\Classes\Registered::getPluginLocation('mensagem', true).DS."app".DS."html";
     ?>
-    <div class="span9 pull-right">
+    <div class="col-xs-9 pull-right">
         <?php
             require_once $dir.'/talkWith.phtml';
             require_once $dir.'/formulario.phtml';
             require_once $dir.'/messages.phtml';
         ?>
     </div>
-    <div class="span3 hidden-phone" id='users_container'>
+    <div class="col-xs-3 hidden-phone" id='users_container'>
         <?php
             require_once $dir.'/users.phtml';
         ?>

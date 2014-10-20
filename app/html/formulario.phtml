@@ -1,9 +1,9 @@
-<div ng-controller="usuario_mensagem_formCTRL" class="span12">
+<div ng-controller="usuario_mensagem_formCTRL" class="col-xs-12">
     <div ng-show="cansend">
         <textarea placeholder="Escreva uma mensagem" 
                   ng-model="content" 
                   redactor="redactorOptions"></textarea>
-        <button class="span2 btn" ng-click="sendMessage()">Enviar</button>
+        <button class="col-xs-2 btn" ng-click="sendMessage()">Enviar</button>
     </div>
     <h4 ng-hide="cansend">
         Você não pode enviar mensagens nesta conversa
