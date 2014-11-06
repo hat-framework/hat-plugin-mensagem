@@ -1,60 +1,43 @@
-<div class="col-xs-12" ng-app="usuario_messageApp">
-    <?php 
-        $this->Html->LoadBowerComponent(array(
-            'moment/min/moment.min','moment/locale/pt-br', 'tinymce/tinymce.min',
-            'angular/angular.min', 'angular-sanitize/angular-sanitize.min', 
-            'redactor/redactor/redactor.min', 
-            'hatframework-hatjs-form/redactor/fullscreen',
-            'hatframework-hatjs-form/redactor/redactor.directive.min',
-        ));
-        $this->Html->LoadBowerComponentCss(array(
-            'redactor/redactor/redactor', 
-        ));
-        
-        $location = "/app/js";
-        $this->Html->LoadJs(array("lib/baseurl", 'lib/haturl'));
-        $this->Html->LoadPlugin('mensagem',array(
-            "$location/app.js", "$location/sync.js",
-            "$location/formulario.js", "$location/messages.js",
-            "$location/users.js", "$location/talkWith.js",
-        ));
+<?php 
+    $this->Html->LoadBowerComponent(array(
+        'moment/min/moment.min','moment/locale/pt-br', 'tinymce/tinymce.min',
+        'angular/angular.min', 'angular-sanitize/angular-sanitize.min', 
+        'redactor/redactor/redactor.min', 
+        'hatframework-hatjs-form/redactor/fullscreen',
+        'hatframework-hatjs-form/redactor/redactor.directive.min',
+    ));
+    $this->Html->LoadBowerComponentCss(array(
+        'redactor/redactor/redactor', 
+    ));
 
-        $dir = classes\Classes\Registered::getPluginLocation('mensagem', true).DS."app".DS."html";
-    ?>
-    <div class="col-xs-9 pull-right">
+    $location = "/app/js";
+    $this->Html->LoadJs(array("lib/baseurl", 'lib/haturl'));
+    $this->Html->LoadPlugin('mensagem',array(
+        "$location/app.js", "$location/sync.js",
+        "$location/formulario.js", "$location/messages.js",
+        "$location/users.js", "$location/talkWith.js",
+    ));
+
+    $dir = classes\Classes\Registered::getPluginLocation('mensagem', true).DS."app".DS."html";
+?>
+<div ng-app="usuario_messageApp">
+    <div class="col-lg-9 col-md-8 pull-right">
         <?php
             require_once $dir.'/talkWith.phtml';
             require_once $dir.'/formulario.phtml';
             require_once $dir.'/messages.phtml';
         ?>
     </div>
-    <div class="col-xs-3 hidden-phone" id='users_container'>
+    <div class="col-lg-3 col-md-4" id='users_container'>
         <?php
             require_once $dir.'/users.phtml';
         ?>
-        
         <div ng-controller="usuario_mensagem_syncCTRL"></div>
     </div>
     
     <style>
-        .unread{
-            border-left: 8px solid #f50000!important;
+        #users_container ul{
+            padding-left: 0;
         }
-        .read{
-            border-left: 8px solid gray!important;
-        }
-        .sub-footer, .footer, .breadcrumb{
-            display: none;
-        }
-        #conteudo {margin-bottom: 0px; padding-bottom: 0px;}
-        #users_container{}
-        #userlist_container{overflow-y:scroll; overflow-x: hidden;}
-        .user_box{
-            margin-top: 5px; cursor: pointer;
-        }
-        .user_box:hover{
-           opacity: 0.6;
-        }
-        .msg_container{margin-top: 5px;}
     </style>
 </div>

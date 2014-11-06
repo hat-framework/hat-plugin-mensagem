@@ -1,25 +1,23 @@
-<div class="col-lg-12" ng-controller="usuario_mensagem_usersCTRL">
-    <div class="col-lg-12">
+<div ng-controller="usuario_mensagem_usersCTRL">
+    <div style='border:1px solid transparent;'>
         <button class="col-lg-6 btn" ng-click="setUsers()" ng-class="{'btn-primary':(last === 'users')}">Usuários</button>
         <button class="col-lg-6 btn" ng-click="setGroups()" ng-class="{'btn-primary':(last === 'groups')}">Grupos</button>
     </div>
     
-    <div class="col-lg-12">
-        <input type="text" placeholder="Buscar Usuários" class="col-lg-12" ng-show="(last === 'users')" ng-hide="hideForm" ng-model="search"/>
-        <div id=''>
-            <div class="container col-lg-12" ng-show='active.length'>
-                <div class="list-group-item col-lg-12"
-                     ng-repeat="group in active" 
-                     ng-class="{'label-warning':group.unread}"
-                     ng-click="current(group)"
-                >
-                    <a>
-                        <span class="list-group-item-heading">{{getName(group)}}</span>
-                        <span class="badge" ng-hide="!group.unread">{{group.unread}}</span>
-                    </a>
-                </div>
-            </div>
-        </div>
+    <div>
+        <input type="text" placeholder="Buscar Usuários" class="form-control" ng-show="(last === 'users')" ng-hide="hideForm" ng-model="search"/>
+        <ul ng-show='active.length' style="margin-top: 40px;">
+            <li class="list-group-item"
+                 ng-repeat="group in active" 
+                 ng-class="{'label-warning':group.unread}"
+                 ng-click="current(group)"
+            >
+                <a>
+                    <span class="list-group-item-heading">{{getName(group)}}</span>
+                    <span class="badge" ng-hide="!group.unread">{{group.unread}}</span>
+                </a>
+            </li>
+        </ul>
         <button ng-click="loadMore()" ng-hide="hideButton()" class="span11">Mais Usuários</button>
     </div>
 </div>
