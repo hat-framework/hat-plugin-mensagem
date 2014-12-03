@@ -1,7 +1,9 @@
 'use strict';
-usuario_messageApp.controller('usuario_mensagem_usersCTRL',['$scope','$http','$rootScope', '$timeout',function($scope,$http,$rootScope, $timeout) {
+usuario_messageApp.controller('usuario_mensagem_usersCTRL',['$scope','$http','$rootScope', '$timeout','getUrlVars',
+function($scope,$http,$rootScope, $timeout, getUrlVars) {
     $scope.friends       = [];
     $scope.hideForm      = true;
+    $scope.hideall       = true;
     $scope.groups        = [];
     $scope.hideGroupForm = true;
     $scope.busy          = false;
@@ -107,8 +109,12 @@ usuario_messageApp.controller('usuario_mensagem_usersCTRL',['$scope','$http','$r
             $scope.hideForm = true;
         }
     });
-    /*$rootScope.$on('usuario_message_send', function(ev, data){
-        console.log(data);
-        console.log($scope.friends);
-    });*/
+    $rootScope.$on('usuario_message_changeSender', function(ev, data){
+        var cod_perfil = getUrlVars()["_perfil"];
+        if(typeof cod_perfil === 'undefined' || cod_perfil === ""){cod_perfil = data.cod_perfil;}
+        if(cod_perfil == '3' || cod_perfil == '2' || cod_perfil == '20'){
+            $scope.hideall = false;
+        }
+        $rootScope.$emit("usuario_message_hiddenUsers", $scope.hideall);
+    });
 }]);

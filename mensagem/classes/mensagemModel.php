@@ -17,9 +17,14 @@ class mensagem_mensagemModel extends \classes\Model\Model{
             //if(false === getBoleanConstant('MENSAGEM_ANY_USER')){return array();}
             $where  = "usuario_perfil_cod='$perfil'";
         }
+        if($perfil == '20'){
+            $wh     = "usuario_perfil_cod NOT IN('".Webmaster."','".Admin."')";
+            $where  = ($where === "")?$wh:"$where OR ($wh)";
+        }
+        
         $all = array('usuario_perfil_cod' => 'todos', 'usuario_perfil_nome' => 'Todos Usuários');
-        $out = $this->perf->selecionar(array('usuario_perfil_cod', 'usuario_perfil_nome'), $where);
-        array_unshift($out, $all);
+        $out = $this->perf->ignorePath()->selecionar(array('usuario_perfil_cod', 'usuario_perfil_nome'), $where);
+        if($perfil != '20'){array_unshift($out, $all);}
         return $out;
     }
     
@@ -28,6 +33,10 @@ class mensagem_mensagemModel extends \classes\Model\Model{
         if(in_array($perfil, array(Webmaster, Admin))){
             return $this->getList($cod_usuario, $page);
         }
+        if($perfil == '20'){
+            return $this->getList($cod_usuario, $page, "cod_perfil NOT IN('".Webmaster."','".Admin."')");
+        }
+        
         $arr = $this->getLastInteractions($cod_usuario, $page);
         if(!empty($arr)){
             $where = "cod_usuario IN('".implode("','",$arr)."') OR cod_perfil IN('".Webmaster."','".Admin."')";
@@ -131,7 +140,7 @@ class mensagem_mensagemModel extends \classes\Model\Model{
     public function getFeatures($cod_usuario){
         $consts = returnConstants('MENSAGEM');
         $perfil = $this->uobj->getCodPerfil($cod_usuario);
-        if(in_array($perfil, array(Webmaster, Admin))){
+        if(in_array($perfil, array(Webmaster, Admin, '20'))){
             foreach($consts as $name => $val){
                 $consts[$name] = true;
             }

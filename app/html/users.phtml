@@ -1,4 +1,4 @@
-<div ng-controller="usuario_mensagem_usersCTRL">
+<div ng-controller="usuario_mensagem_usersCTRL" ng-hide="hideall">
     <div style='border:1px solid transparent;'>
         <button class="col-lg-6 btn" ng-click="setUsers()" ng-class="{'btn-primary':(last === 'users')}">Usuários</button>
         <button class="col-lg-6 btn" ng-click="setGroups()" ng-class="{'btn-primary':(last === 'groups')}">Grupos</button>

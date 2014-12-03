@@ -21,14 +21,14 @@
     $dir = classes\Classes\Registered::getPluginLocation('mensagem', true).DS."app".DS."html";
 ?>
 <div ng-app="usuario_messageApp">
-    <div class="col-lg-9 col-md-8 pull-right">
+    <div ng-controller="usuario_mensagem_globalCTRL" ng-class="{'col-lg-9 col-md-8 col-sm-8 col-xs-12 pull-right':hideall}">
         <?php
             require_once $dir.'/talkWith.phtml';
             require_once $dir.'/formulario.phtml';
             require_once $dir.'/messages.phtml';
         ?>
     </div>
-    <div class="col-lg-3 col-md-4" id='users_container'>
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12" id='users_container'>
         <?php
             require_once $dir.'/users.phtml';
         ?>
