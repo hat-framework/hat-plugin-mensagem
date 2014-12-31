@@ -15,7 +15,7 @@ class mensagemActions extends Actions{
             'nome'      => "mensagem_manage",
             'label'     => "Moderar Mensagens",
             'descricao' => "Permite que o modere as mensagens enviadas pelos usuários do sistema",
-            'default'   => 's',
+            'default'   => 'n',
         )
     );
     
@@ -23,39 +23,39 @@ class mensagemActions extends Actions{
         
         'mensagem/index/index' => array(
             'label' => 'Todas as mensagens', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
-            'permission' => 'usuario_AC', 'needcod' => false
+            'permission' => 'mensagem_send', 'needcod' => false
         ),
         'mensagem/mensagem/index' => array(
             'label' => 'Todas as mensagens', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
-            'permission' => 'usuario_AC', 'needcod' => false,
+            'permission' => 'mensagem_send', 'needcod' => false,
             'breadscrumb' => array('usuario/login/logado', 'mensagem/mensagem/index'),
         ),
         
         'mensagem/mensagem/formulario' => array(
             'label' => 'Enviar Mensagem', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
-            'permission' => 'usuario_AC', 'needcod' => false,
+            'permission' => 'mensagem_send', 'needcod' => false,
             'breadscrumb' => array('usuario/login/logado', 'mensagem/mensagem/index', 'mensagem/mensagem/formulario' ),
         ),
         
         'mensagem/mensagem/data' => array(
             'label' => 'Recuperar dados', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
-            'permission' => 'usuario_AC', 'needcod' => false,
+            'permission' => 'mensagem_send', 'needcod' => false,
         ),
         'mensagem/mensagem/conversa' => array(
             'label' => 'Recuperar conversa', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
-            'permission' => 'usuario_AC', 'needcod' => false,
+            'permission' => 'mensagem_send', 'needcod' => false,
         ),
         'mensagem/mensagem/getUserContactList' => array(
             'label' => 'Lista de Contatos', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
-            'permission' => 'usuario_AC', 'needcod' => false,
+            'permission' => 'mensagem_manage', 'needcod' => false,
         ),
         'mensagem/mensagem/searchUser' => array(
             'label' => 'Buscar Usuário', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
-            'permission' => 'usuario_AC', 'needcod' => false,
+            'permission' => 'mensagem_manage', 'needcod' => false,
         ),
         'mensagem/mensagem/notify' => array(
             'label' => 'Notificar', 'publico' => 's', 'default_yes' => 's','default_no' => 'n', 
-            'permission' => 'usuario_AC', 'needcod' => false,
+            'permission' => 'mensagem_send', 'needcod' => false,
         ),
 
     );

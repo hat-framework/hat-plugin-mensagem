@@ -112,7 +112,7 @@ function($scope,$http,$rootScope, $timeout, getUrlVars) {
     $rootScope.$on('usuario_message_changeSender', function(ev, data){
         var cod_perfil = getUrlVars()["_perfil"];
         if(typeof cod_perfil === 'undefined' || cod_perfil === ""){cod_perfil = data.cod_perfil;}
-        if(cod_perfil == '3' || cod_perfil == '2' || cod_perfil == '20'){
+        if(cod_perfil == '3' || cod_perfil == '20'){
             $scope.hideall = false;
         }
         $rootScope.$emit("usuario_message_hiddenUsers", $scope.hideall);
