@@ -1,0 +1,28 @@
+<?php 
+    $this->Html->LoadBowerComponent(array(
+        'moment/min/moment.min','moment/locale/pt-br', 'tinymce/tinymce.min',
+        'angular/angular.min', 'angular-sanitize/angular-sanitize.min', 
+        'redactor/redactor/redactor.min', 
+        'hatframework-hatjs-form/redactor/fullscreen',
+        'hatframework-hatjs-form/redactor/redactor.directive.min',
+    ), array(
+        'redactor/redactor/redactor', 
+    ));
+    $type     = 'usuario';
+    $location = "/app/$type/js";
+    $this->Html->LoadJs(array("lib/baseurl", 'lib/haturl'));
+    $this->Html->LoadPlugin('mensagem',array(
+        "$location/app.js"       , "$location/sync.js",
+        "$location/formulario.js", "$location/messages.js"
+    ));
+
+    $dir = classes\Classes\Registered::getPluginLocation('mensagem', true).DS."app".DS."$type".DS."html";
+?>
+
+<div ng-app="message_userApp">
+    <div ng-controller="message_user_syncCTRL"></div>
+    <?php
+            require_once $dir.'/formulario.phtml';
+            require_once $dir.'/messages.phtml';
+    ?>
+</div>

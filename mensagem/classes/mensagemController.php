@@ -4,19 +4,44 @@ class mensagemController extends classes\Controller\CController{
     
     public $model_name = 'mensagem/mensagem';
     public function __construct($vars) {
-        $this->addToFreeCod(array("data", "friendlist", "conversa", "getUserContactList", "searchUser"));
+        $this->addToFreeCod(array(
+            "data", "friendlist", "conversa", "getUserContactList", "searchUser", "moderador", "usuario"
+        ));
         parent::__construct($vars);
     }    
     
     public function index($display = true, $link = "") {
-        $this->display(LINK."/app");
+        $perfil = usuario_loginModel::CodPerfil();
+        if($perfil === "20"){Redirect(LINK ."/moderador");}
+        
+        if($this->LoadModel('usuario/login', 'uobj')->UserIsAdmin()){
+            return $this->display(LINK."/index");
+        }
+        Redirect(LINK . "/usuario");
+    }
+    
+    public function moderador(){
+        $this->display(LINK."/moderador");
+    }
+    
+    public function usuario(){
+        $perfil = usuario_loginModel::CodPerfil();
+        if($perfil === "20"){Redirect(LINK ."/moderador");}
+        $this->display(LINK."/usuario");
+    }
+    
+    private function typeIsUser(){
+        $type = filter_input(INPUT_GET, 'type');
+        return $type === 'user';
     }
     
     public function data(){
-        $arr['sender']     = $this->LoadModel('usuario/login', 'uobj')->getUserNick(array(), true);
-        $arr['friendlist'] = $this->model->getFriendList(usuario_loginModel::CodUsuario());
-        $arr['groups']     = $this->model->getGroups(usuario_loginModel::CodUsuario());
+        if(!$this->typeIsUser()){
+            $arr['friendlist'] = $this->model->getFriendList(usuario_loginModel::CodUsuario());
+            $arr['groups']     = $this->model->getGroups(usuario_loginModel::CodUsuario());
+        }
         $arr['features']   = $this->model->getFeatures(usuario_loginModel::CodUsuario());
+        $arr['sender']     = $this->LoadModel('usuario/login', 'uobj')->getUserNick(array(), true);
         die(json_encode($arr, JSON_NUMERIC_CHECK));
     }
 
@@ -35,10 +60,21 @@ class mensagemController extends classes\Controller\CController{
     }
     
     public function conversa(){
-        if(!isset($this->vars[0]) || !isset($this->vars[1])){die(json_encode(array()));}
-        $page = (isset($this->vars[2]))?$this->vars[2]:"0";
-        $arr = $this->model->LoadUserTalk($this->vars[0], $this->vars[1], $page);
-        $this->model->setRead($this->vars[1], $this->vars[0]);
+        $cod_usuario = (isset($this->vars[0]))?$this->vars[0]:"";
+        if($cod_usuario === ""){die(json_encode(array()));}
+        
+        if($this->typeIsUser()){
+            $page = (isset($this->vars[1]))?$this->vars[1]:"0";
+            $arr  = $this->model->LoadUserTalk($cod_usuario, "", $page);
+            //print_rd($arr);
+            die(json_encode($arr));
+        }
+        
+        $cod_friend = (isset($this->vars[1]))?$this->vars[1]:"";
+        $page       = (isset($this->vars[2]))?$this->vars[2]:"0";
+        if($cod_friend === ""){die(json_encode(array()));}
+        $arr = $this->model->LoadUserTalk($cod_usuario, $cod_friend, $page);
+        $this->model->setRead($cod_friend, $cod_usuario);
         die(json_encode($arr));
     }
     

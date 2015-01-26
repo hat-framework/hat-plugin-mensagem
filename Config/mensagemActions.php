@@ -31,6 +31,20 @@ class mensagemActions extends Actions{
             'breadscrumb' => array('usuario/login/logado', 'mensagem/mensagem/index'),
         ),
         
+        'mensagem/mensagem/moderador' => array(
+            'label' => 'Moderar Mensagens', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
+            'permission' => 'mensagem_manage', 'needcod' => false,
+            'breadscrumb' => array('usuario/login/logado', 'mensagem/mensagem/moderador'),
+        ),
+        
+        'mensagem/mensagem/usuario' => array(
+            'label' => 'Visualizar Mensagens', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
+            'permission' => 'mensagem_send', 'needcod' => false,
+            'breadscrumb' => array('usuario/login/logado', 'mensagem/mensagem/usuario'),
+        ),
+        
+        
+        
         'mensagem/mensagem/formulario' => array(
             'label' => 'Enviar Mensagem', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
             'permission' => 'mensagem_send', 'needcod' => false,

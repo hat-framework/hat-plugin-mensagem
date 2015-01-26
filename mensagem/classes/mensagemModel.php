@@ -11,7 +11,7 @@ class mensagem_mensagemModel extends \classes\Model\Model{
     
     public function getGroups($cod_usuario){
         $this->LoadModel('usuario/perfil', 'perf');
-        $perfil = $this->uobj->getCodPerfil($cod_usuario);
+        $perfil = usuario_loginModel::CodPerfil();
         $where  = "";
         if(!in_array($perfil, array(Webmaster, Admin))){
             //if(false === getBoleanConstant('MENSAGEM_ANY_USER')){return array();}
@@ -102,23 +102,34 @@ class mensagem_mensagemModel extends \classes\Model\Model{
         }
     }
     
-    public function LoadUserTalk($from, $to, $page = 0){
+    public function LoadUserTalk($from, $to = "", $page = 0){
         $limit  = 10;
         $offset = $limit * $page;
         $from   = $this->antinjection($from);
         $to     = $this->antinjection($to);
-        $type   = substr($to, 0, 5);
-        $where  = "(`from`='$from' AND `to`='$to') OR (`from`='$to' AND `to`='$from')";
-        if(in_array($type, array('todos', 'group'))){
-            $data = "";
-            //limita a visualização dos grupos apenas para a data após o ingresso do usuário no sistema
-            if(true === getBoleanConstant("MENSAGEM__LIMIT_DATA")){
-                $user   = $this->uobj->getItem($from, "", false, array('user_criadoem'));
-                $data   = ($user['user_criadoem'] === "")?"":" AND data >= '{$user['user_criadoem']}'";
+        $where  = "(`from`='$from' OR `to`='$from')";
+        
+        if($to !== ""){
+            $type   = substr($to, 0, 5);
+            $where  = "(`from`='$from' AND `to`='$to') OR (`from`='$to' AND `to`='$from')";
+            if(in_array($type, array('todos', 'group'))){
+                $data = "";
+                //limita a visualização dos grupos apenas para a data após o ingresso do usuário no sistema
+                if(true === getBoleanConstant("MENSAGEM__LIMIT_DATA")){
+                    $user   = $this->uobj->getItem($from, "", false, array('user_criadoem'));
+                    $data   = ($user['user_criadoem'] === "")?"":" AND data >= '{$user['user_criadoem']}'";
+                }
+                $where  = "(`to`='$to') $data";
             }
-            $where  = "(`to`='$to') $data";
         }
-        $var    = $this->selecionar(array('mensagem', '`from`', '`to`', 'data', 'visualizada'), $where, $limit, $offset, "data DESC");
+        
+        
+        $this->db->Join($this->tabela, 'usuario as u1',array('`from`'), array('cod_usuario'), "LEFT");
+        $this->db->Join($this->tabela, 'usuario as u2', array('`to`'), array('cod_usuario'), "LEFT");
+        $var    = $this->selecionar(
+                array('mensagem', '`from`', '`to`', 'data', 'visualizada', 'u1.user_name as fromname', 'u2.user_name as toname'), 
+                $where, $limit, $offset, "data DESC"
+        );
         return $var;
     }
     

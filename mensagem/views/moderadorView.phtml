@@ -5,12 +5,11 @@
         'redactor/redactor/redactor.min', 
         'hatframework-hatjs-form/redactor/fullscreen',
         'hatframework-hatjs-form/redactor/redactor.directive.min',
-    ));
-    $this->Html->LoadBowerComponentCss(array(
+    ), array(
         'redactor/redactor/redactor', 
     ));
 
-    $location = "/app/js";
+    $location = "/app/moderador/js/";
     $this->Html->LoadJs(array("lib/baseurl", 'lib/haturl'));
     $this->Html->LoadPlugin('mensagem',array(
         "$location/app.js", "$location/sync.js",
@@ -18,7 +17,7 @@
         "$location/users.js", "$location/talkWith.js",
     ));
 
-    $dir = classes\Classes\Registered::getPluginLocation('mensagem', true).DS."app".DS."html";
+    $dir = classes\Classes\Registered::getPluginLocation('mensagem', true).DS."app".DS.'moderador'.DS."html";
 ?>
 <div ng-app="usuario_messageApp">
     <div ng-controller="usuario_mensagem_globalCTRL" ng-class="{'col-lg-9 col-md-8 col-sm-8 col-xs-12 pull-right':hideall}">
