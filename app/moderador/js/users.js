@@ -1,6 +1,6 @@
 'use strict';
-usuario_messageApp.controller('usuario_mensagem_usersCTRL',['$scope','$http','$rootScope', '$timeout','getUrlVars',
-function($scope,$http,$rootScope, $timeout, getUrlVars) {
+usuario_messageApp.controller('usuario_mensagem_usersCTRL',['$scope','$http','$location','$rootScope', '$timeout','getUrlVars',
+function($scope,$http,$location,$rootScope, $timeout, getUrlVars) {
     $scope.friends       = [];
     $scope.hideForm      = true;
     $scope.hideall       = true;
@@ -16,11 +16,13 @@ function($scope,$http,$rootScope, $timeout, getUrlVars) {
 
     $scope.currentGroup = function(group){
         var fakeuser = {cod_usuario: 'group_'+group.usuario_perfil_cod, user_name:group.usuario_perfil_nome};
+        $location.search('user'   , group.usuario_perfil_cod);
         $rootScope.$emit("usuario_message_changeUser", fakeuser);
     };
     
     $scope.currentUser = function(user){
         if(typeof user.unread !== 'undefined'){delete user.unread;}
+        $location.search('user'   , user.cod_usuario);
         $rootScope.$emit("usuario_message_changeUser", user);
     };
     

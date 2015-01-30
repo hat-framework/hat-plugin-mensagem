@@ -10,8 +10,15 @@ function($scope,$http,$rootScope, $sce) {
     //$scope.reddit   = new Reddit();
 
     $rootScope.$on('message_user_send', function(ev, data){
+        console.log(data);
         $scope.messages.unshift($scope.prepareMessageData(data));
     });
+    
+    $scope.prepareMessageData = function(data){
+        data['cod_usuario'] = data['from'];
+        data['from'] = (data['from'] == $scope.sender.cod_usuario)?$scope.sender.user_name:$scope.user.user_name;
+        return data;
+    };
     
     $rootScope.$on('message_user_sender', function(ev, data){
         $scope.sender   = data;

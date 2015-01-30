@@ -109,7 +109,7 @@ class mensagem_mensagemModel extends \classes\Model\Model{
         $to     = $this->antinjection($to);
         $where  = "(`from`='$from' OR `to`='$from')";
         
-        if($to !== ""){
+        /*if($to !== ""){
             $type   = substr($to, 0, 5);
             $where  = "(`from`='$from' AND `to`='$to') OR (`from`='$to' AND `to`='$from')";
             if(in_array($type, array('todos', 'group'))){
@@ -121,7 +121,7 @@ class mensagem_mensagemModel extends \classes\Model\Model{
                 }
                 $where  = "(`to`='$to') $data";
             }
-        }
+        }*/
         
         
         $this->db->Join($this->tabela, 'usuario as u1',array('`from`'), array('cod_usuario'), "LEFT");

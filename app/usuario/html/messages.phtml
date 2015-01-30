@@ -1,14 +1,28 @@
-<div id='msgs_ctrl' ng-controller="message_userCTRL">
+<div id='msgs_ctrl' ng-controller="message_userCTRL" style="margin-left: 15px;">
     <div 
-        class="bs-callout" 
+        class="bs-callout col-lg-12" 
         ng-repeat="msg in messages" 
         ng-class="{
-            'bs-callout-danger':(msg.visualizada === 's'),
-            'active':(msg.visualizada === 'n' && msg.from === user.cod_usuario)
+            'bs-callout-danger'        :(msg.visualizada == 'n'),
+            'bs-callout-info margin15' :(msg.from == sender.cod_usuario),
+            'active'                   :(msg.visualizada == 'n' && msg.from == sender.cod_usuario),
         }">
         <div class=""><a href="{{url}}/{{msg.from}}" target="_BLANK">{{msg.fromname}}</a> - {{msg.data|fromNow}}</div>
-        <div class="" ng-bind-html="msg.mensagem"></div>
+        <div class="msgbox" ng-bind-html="msg.mensagem"></div>
     </div>
     <button ng-click="getMessages()" ng-hide="hideButton()" class="col-lg-12">Mais mensagens</button>
     <div ng-show="stop" class="col-lg-12 box-content">Não existem mais mensagens nesta conversa!</div>
+    <style type="text/css">
+        .margin15{
+            margin-left: 35px;
+        }
+        .margin30{
+            margin-left: 60px;
+        }
+        .msgbox img{
+            width: 98%; // Force IE10 and below to size SVG images correctly
+            max-width: 600px; // Part 1: Set a maximum relative to the parent
+            margin: 3px;
+        }
+    </style>
 </div>

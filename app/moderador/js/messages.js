@@ -54,9 +54,9 @@ function($scope,$http,$rootScope, $sce) {
     };
     
     $scope.prepareMessageData = function(data){
-        data['cod_usuario'] = data['from'];
-        data['from'] = (data['from'] == $scope.sender.cod_usuario)?$scope.sender.user_name:$scope.user.user_name;
-        data['to']   = (data['to']   == $scope.sender.cod_usuario)?$scope.sender.user_name:$scope.user.user_name;
+        //data['cod_usuario'] = data['from'];
+        //data['from'] = (data['from'] == $scope.sender.cod_usuario)?$scope.sender.user_name:$scope.user.user_name;
+        //data['to']   = (data['to']   == $scope.sender.cod_usuario)?$scope.sender.user_name:$scope.user.user_name;
         return data;
     };
     

@@ -8,6 +8,7 @@
     ), array(
         'redactor/redactor/redactor', 
     ));
+    //$url = \classes\Classes\Registered::getResourceLocationUrl('upload')."/src/jsplugins/redactor/plugins/imagemanager";
 
     $location = "/app/moderador/js/";
     $this->Html->LoadJs(array("lib/baseurl", 'lib/haturl'));
@@ -34,9 +35,17 @@
         <div ng-controller="usuario_mensagem_syncCTRL"></div>
     </div>
     
-    <style>
+    <style type="text/css">
         #users_container ul{
             padding-left: 0;
+        }
+        .margin15{
+            margin-left: 35px;
+        }
+        .msgbox img{
+            width: 98%; // Force IE10 and below to size SVG images correctly
+            max-width: 600px; // Part 1: Set a maximum relative to the parent
+            margin: 3px;
         }
     </style>
 </div>

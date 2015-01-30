@@ -62,7 +62,6 @@ class mensagemController extends classes\Controller\CController{
     public function conversa(){
         $cod_usuario = (isset($this->vars[0]))?$this->vars[0]:"";
         if($cod_usuario === ""){die(json_encode(array()));}
-        
         if($this->typeIsUser()){
             $page = (isset($this->vars[1]))?$this->vars[1]:"0";
             $arr  = $this->model->LoadUserTalk($cod_usuario, "", $page);
@@ -73,7 +72,7 @@ class mensagemController extends classes\Controller\CController{
         $cod_friend = (isset($this->vars[1]))?$this->vars[1]:"";
         $page       = (isset($this->vars[2]))?$this->vars[2]:"0";
         if($cod_friend === ""){die(json_encode(array()));}
-        $arr = $this->model->LoadUserTalk($cod_usuario, $cod_friend, $page);
+        $arr = $this->model->LoadUserTalk($cod_friend, "", $page);
         $this->model->setRead($cod_friend, $cod_usuario);
         die(json_encode($arr));
     }

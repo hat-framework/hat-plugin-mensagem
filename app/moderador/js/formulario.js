@@ -10,6 +10,7 @@ usuario_messageApp.controller('usuario_mensagem_formCTRL',['$scope','$http','$ro
     $scope.sendMessage = function(){
         $rootScope.$emit("usuario_message_send", {
             mensagem :$scope.content, 
+            fromname :$scope.sender.user_name,
             from     :$scope.sender.cod_usuario,
             to       :$scope.user.cod_usuario,
             date     :$scope.getDate()
@@ -68,6 +69,10 @@ usuario_messageApp.controller('usuario_mensagem_formCTRL',['$scope','$http','$ro
         wym: true, lang: 'pt_br', focus: false, iframe: false, convertVideoLinks: true,
         autoresize: true, convertImageLinks: true, convertLinks: true, imageFloatMargin: '30px',
         mobile: true, observeLinks: true,
-        pastePlainText: true, placeholder: true,  plugins: ['fullscreen:startFullscreen']
+        pastePlainText: true, placeholder: true,  plugins: ['fullscreen:startFullscreen'],
+        imageUploadCallback: function(image, json){
+            $(image).addClass('img-responsive');
+            $(image).attr('class', 'img-responsive');
+        }
     };
 }]);

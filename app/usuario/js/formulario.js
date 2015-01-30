@@ -11,6 +11,7 @@ message_userApp.controller('message_user_formCTRL',['$scope','$http','$rootScope
         $rootScope.$emit("message_user_send", {
             mensagem :$scope.content, 
             from     :$scope.sender.cod_usuario,
+            fromname :$scope.sender.user_name,
             to       :$scope.user.cod_usuario,
             date     :$scope.getDate()
         });
