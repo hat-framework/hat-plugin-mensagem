@@ -46,7 +46,13 @@ class mensagem_mensagemModel extends \classes\Model\Model{
     }
     
     public function findUsers($cod_usuario, $q){
+        
         $where = "user_name LIKE '$q%'";
+        $perfil = $this->LoadModel('usuario/login', 'uobj')->getCodPerfil($cod_usuario);
+        if($perfil == '20'){
+            return $this->getList($cod_usuario, 0, "$where AND cod_perfil NOT IN('".Webmaster."','".Admin."')");
+        }
+        
         return $this->getList($cod_usuario, 0, $where);
     }
     
