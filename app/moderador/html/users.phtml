@@ -10,6 +10,7 @@
                class="form-control" 
                ng-show="(useractive && !hideForm)"
                ng-model="search"
+               ng-model-options="{ debounce: 300 }"
                style="margin-top: 5px;"
         />
         <ul ng-show='active.length' >
@@ -29,11 +30,11 @@
             </li>
         </ul>
         <div ng-hide="!useractive">
-            <div>Página atual: {{page}}</div>
-            <button ng-click="loadPage(1)"      ng-class="{'disabled':(page===1    ||busy)}"                class="btn btn-success col-lg-3">First</button>
-            <button ng-click="loadPage(page-1)" ng-class="{'disabled':(page===1    ||busy)}"                class="btn btn-success col-lg-3"><i class="fa fa-arrow-circle-left"></i></button>
-            <button ng-click="loadPage(page+1)" ng-class="{'disabled':(page=== last||busy)}"                class="btn btn-success col-lg-3"><i class="fa fa-arrow-circle-right"></i></button>
-            <button ng-click="loadPage(last)"   ng-class="{'disabled':(last == 0 || page=== last || busy)}" class="btn btn-success col-lg-3">Last</button>
+            <div ng-hide="search.length > 0">Página atual: {{page}}</div>
+            <button ng-click="loadPage(1)"      ng-class="{'disabled':(search.length > 0 ||page===1    ||busy)}"                 class="btn btn-success col-lg-3">First</button>
+            <button ng-click="loadPage(page-1)" ng-class="{'disabled':(search.length > 0 ||page===1    ||busy)}"                 class="btn btn-success col-lg-3"><i class="fa fa-arrow-circle-left"></i></button>
+            <button ng-click="loadPage(page+1)" ng-class="{'disabled':(search.length > 0 ||page=== last||busy)}"                 class="btn btn-success col-lg-3"><i class="fa fa-arrow-circle-right"></i></button>
+            <button ng-click="loadPage(last)"   ng-class="{'disabled':(search.length > 0 ||last == 0   ||busy|| page=== last )}" class="btn btn-success col-lg-3">Last</button>
         </div>
     </div>
 </div>

@@ -114,23 +114,23 @@ function($scope,$location,$rootScope, $timeout, $api) {
     /*************************
            Watchers
      *************************/    
-    $scope.$watch('search', function(newValue, oldValue) {
+    $scope.$watch('search', function() {
+        if(true === $scope.busySearch){return;}
+        $scope.busySearch = true;
+        
         if($scope.search.length === 0){
+            $scope.busySearch = false;
             $scope.setUsers();
             return;
         }
-        
-        if(true === $scope.busySearch){
-            return;
-        }
-        
-        $scope.busySearch = true;
-        $timeout(function(){   //Set timeout
-            $api.execute('msg_contact_list', function(response){
-                $scope.active = response;
-                $scope.busySearch = false;
-            }, "&q="+$scope.search);
-        },300);
+
+        $api.execute('msg_search_user', function(response){
+            $scope.busySearch = false;
+            if($scope.search.length === 0){
+                return $scope.setUsers();
+            }
+            $scope.active     = response;
+        }, "&q="+$scope.search);
     }, true);
     
     $scope.$watch(function() {
@@ -141,6 +141,9 @@ function($scope,$location,$rootScope, $timeout, $api) {
             var user   = '';
             var key    = (data[0] === 'user')?'cod_usuario':'usuario_perfil_cod';
             var list   = (data[0] === 'user')?$scope.friends:$scope.groups;
+            
+            //se tem algum search
+            if($scope.search.length > 0){list = $scope.active;}
             if(data[1] === ""){return;}
             for(var i in list){
                 if(list[i][key] != data[1]){continue;}
@@ -148,8 +151,10 @@ function($scope,$location,$rootScope, $timeout, $api) {
                 break;
             }
             if(user === ''){return;}
+            
             if(data[0] === 'group'){return $scope.setGroups(user);}
             $scope.setUsers(user);
+            if($scope.search.length > 0){$scope.active = list;}
         }catch(e){}
     });
     /*************************
