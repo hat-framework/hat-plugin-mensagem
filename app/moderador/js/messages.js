@@ -1,6 +1,6 @@
 'use strict';
-usuario_messageApp.controller('usuario_mensagemCTRL',['$scope','$http','$rootScope','$sce',
-function($scope,$http,$rootScope, $sce) {
+usuario_messageApp.controller('usuario_mensagemCTRL',['$scope','$api','$rootScope',
+function($scope,$api,$rootScope) {
     $scope.messages = [];
     $scope.sender   = [];
     $scope.user     = [];
@@ -11,7 +11,7 @@ function($scope,$http,$rootScope, $sce) {
     //$scope.reddit   = new Reddit();
 
     $rootScope.$on('usuario_message_send', function(ev, data){
-        $scope.messages.unshift($scope.prepareMessageData(data));
+        $scope.messages.unshift(data);
     });
     
     $rootScope.$on('usuario_message_changeUser', function(ev, data){
@@ -40,24 +40,15 @@ function($scope,$http,$rootScope, $sce) {
         if($scope.user.length === 0 || $scope.sender.length === 0){return;}
         if(true === $scope.stop){return;}
         if(true === $scope.busy){return;}
-        
         $scope.busy = true;
         var link    = $scope.sender.cod_usuario+"/"+$scope.user.cod_usuario+"/"+$scope.page++;
-        var url     = window.location.protocol+"//"+window.location.host+"/index.php?ajax=true&url=mensagem/mensagem/conversa/"+link;
-        $http({method: 'GET', url: url}).success(function(response) {
+        $api.execute('msg_conversa', function(response){
             if(response.length === 0 || response.length < 10){$scope.stop = true;}
             for(var i in response){
-                $scope.messages.push($scope.prepareMessageData(response[i]));
+                $scope.messages.push(response[i]);
             }
             $scope.busy = false;
-        });
-    };
-    
-    $scope.prepareMessageData = function(data){
-        //data['cod_usuario'] = data['from'];
-        //data['from'] = (data['from'] == $scope.sender.cod_usuario)?$scope.sender.user_name:$scope.user.user_name;
-        //data['to']   = (data['to']   == $scope.sender.cod_usuario)?$scope.sender.user_name:$scope.user.user_name;
-        return data;
+        }, link);
     };
     
 }]);

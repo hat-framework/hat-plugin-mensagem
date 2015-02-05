@@ -3,6 +3,8 @@ class mensagem_mensagemModel extends \classes\Model\Model{
     public $tabela      = "mensagem_mensagem";
     public $pkey        = 'cod';
     protected $feature  = "MENSAGEM_ENABLED";
+    private $lastWhere  = "";
+    private $limit      = 10;
     
     public function __construct() {
         $this->LoadModel('usuario/login', 'uobj');
@@ -26,6 +28,19 @@ class mensagem_mensagemModel extends \classes\Model\Model{
         $out = $this->perf->ignorePath()->selecionar(array('usuario_perfil_cod', 'usuario_perfil_nome'), $where);
         if($perfil != '20'){array_unshift($out, $all);}
         return $out;
+    }
+    
+    public function getTotalPages($cod_usuario){
+        if($this->lastWhere === ""){
+            $this->getFriendList($cod_usuario);
+            if($this->lastWhere === ""){return 1;}
+        }
+        $total = $this->getCount($this->lastWhere);
+        if($this->limit < 1){$this->limit = 1;}
+        $response = ceil($total/$this->limit);
+        $response++;
+        if($response < 0){$response = 1;}
+        return $response;
     }
     
     public function getFriendList($cod_usuario, $page = 0){
@@ -57,7 +72,7 @@ class mensagem_mensagemModel extends \classes\Model\Model{
     }
     
     private function getList($cod_usuario, $page, $where = ""){
-        $limit   = 10;
+        $limit   = $this->limit;
         $offsset = $limit * $page;
         $wh      = "cod_usuario != '$cod_usuario'";
         $where   = ($where === "")?$wh:"$wh AND ($where)";
@@ -75,6 +90,7 @@ class mensagem_mensagemModel extends \classes\Model\Model{
             }
         }
         
+        $this->lastWhere = $where;
         $this->getUnreadList($out,$cod_usuario,$findqtd);
         if(empty($list)){return $out;}
         return array_merge($out, $list);
@@ -139,9 +155,9 @@ class mensagem_mensagemModel extends \classes\Model\Model{
         return $var;
     }
     
-    public function setRead($from, $to){
+    public function setRead($from, $to = ""){
         $post  = array('visualizada' => 's');
-        $where = "`from`='$from' AND `to`='$to'";
+        $where = ($to !== "")?"`from`='$from' AND `to`='$to'":"`from`='$from'";
         if(!$this->db->Update($this->tabela,$post, $where)){
             $this->setErrorMessage($this->db->getErrorMessage());
             return false;

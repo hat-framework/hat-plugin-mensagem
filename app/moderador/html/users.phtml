@@ -1,7 +1,19 @@
 <div ng-controller="usuario_mensagem_usersCTRL" ng-hide="hideall">
     <div style='border:1px solid transparent;'>
-        <button class="col-lg-6 btn" ng-click="setUsers(lastUser)"   ng-class="{'btn-primary':(useractive)}">Usuários</button>
-        <button class="col-lg-6 btn" ng-click="setGroups(lastGroup)" ng-class="{'btn-primary':(!useractive)}">Grupos</button>
+        <button 
+            class="col-lg-6 col-md-6 col-sm-12 btn btn-lg" 
+            ng-click="setUsers(lastUser)"   
+            ng-class="{'btn-primary':(useractive)}"
+        >
+            <i class="fa fa-user"></i> Usuários
+        </button>
+        <button 
+            class="col-lg-6 col-md-6 col-sm-12 btn btn-lg" 
+            ng-click="setGroups(lastGroup)" 
+            ng-class="{'btn-primary':(!useractive)}"
+        >
+            <i class="fa fa-users"></i>Grupos
+        </button>
     </div>
     <div class="clearfix"></div>
     <div style="margin: 8px 0 8px 0;">
@@ -29,8 +41,8 @@
                 </a>
             </li>
         </ul>
-        <div ng-hide="!useractive">
-            <div ng-hide="search.length > 0">Página atual: {{page}}</div>
+        <div ng-hide="!useractive || last == 1">
+            <div ng-hide="search.length > 0">Página atual: {{page}} de {{last}}</div>
             <button ng-click="loadPage(1)"      ng-class="{'disabled':(search.length > 0 ||page===1    ||busy)}"                 class="btn btn-success col-lg-3">First</button>
             <button ng-click="loadPage(page-1)" ng-class="{'disabled':(search.length > 0 ||page===1    ||busy)}"                 class="btn btn-success col-lg-3"><i class="fa fa-arrow-circle-left"></i></button>
             <button ng-click="loadPage(page+1)" ng-class="{'disabled':(search.length > 0 ||page=== last||busy)}"                 class="btn btn-success col-lg-3"><i class="fa fa-arrow-circle-right"></i></button>

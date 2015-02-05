@@ -36,11 +36,13 @@ class mensagemController extends classes\Controller\CController{
     }
     
     public function data(){
+        $cod_user = usuario_loginModel::CodUsuario();
         if(!$this->typeIsUser()){
-            $arr['friendlist'] = $this->model->getFriendList(usuario_loginModel::CodUsuario());
-            $arr['groups']     = $this->model->getGroups(usuario_loginModel::CodUsuario());
+            $arr['friendlist']       = $this->model->getFriendList($cod_user);
+            $arr['friendsPageCount'] = $this->model->getTotalPages($cod_user);
+            $arr['groups']           = $this->model->getGroups($cod_user);
         }
-        $arr['features']   = $this->model->getFeatures(usuario_loginModel::CodUsuario());
+        $arr['features']   = $this->model->getFeatures($cod_user);
         $arr['sender']     = $this->LoadModel('usuario/login', 'uobj')->getUserNick(array(), true);
         die(json_encode($arr, JSON_NUMERIC_CHECK));
     }
@@ -65,6 +67,7 @@ class mensagemController extends classes\Controller\CController{
         if($this->typeIsUser()){
             $page = (isset($this->vars[1]))?$this->vars[1]:"0";
             $arr  = $this->model->LoadUserTalk($cod_usuario, "", $page);
+            $this->model->setRead($cod_usuario, "");
             //print_rd($arr);
             die(json_encode($arr));
         }

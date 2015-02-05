@@ -6,6 +6,9 @@ usuario_messageApp.config(['$apiProvider', function ($apiProvider) {
     $apiProvider.concatInUrl("&ajax=1");
     $apiProvider.cacheList(true);
     $apiProvider.registerServices({
+        'msg_data'          :{type:'list' , 'urltype':'common', 'url':'mensagem/mensagem/data'},
+        'msg_conversa'      :{type:'list' , 'urltype':'common', 'url':'mensagem/mensagem/conversa'},
+        'msg_formulario'    :{type:'save' , 'urltype':'common', 'url':'mensagem/mensagem/formulario'},
         'msg_contact_list'  :{type:'list' , 'urltype':'common', 'url':'mensagem/mensagem/getUserContactList'},
         'msg_search_user'   :{type:'list' , 'urltype':'common', 'url':'mensagem/mensagem/searchUser'}
     });

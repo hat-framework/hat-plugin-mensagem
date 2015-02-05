@@ -1,6 +1,6 @@
 'use strict';
-usuario_messageApp.controller('usuario_mensagem_formCTRL',['$scope','$http','$rootScope',
-    function($scope,$http,$rootScope) {
+usuario_messageApp.controller('usuario_mensagem_formCTRL',['$scope','$api','$rootScope',
+    function($scope,$api,$rootScope) {
     $scope.cansend = false;
     $scope.sender  = [];
     $scope.user    = [];
@@ -29,15 +29,14 @@ usuario_messageApp.controller('usuario_mensagem_formCTRL',['$scope','$http','$ro
     };
     
     $scope.persistMessage = function(msg){
-        var url = window.location.protocol+"//"+window.location.host+"/index.php?ajax=true&url=mensagem/mensagem/formulario";
         var data = {
             from     :$scope.sender.cod_usuario, 
             to       :$scope.user.cod_usuario, 
             mensagem :$scope.content, 
         };
-        $http.post(url, data).success(function(response) {
+        $api.execute("msg_formulario", function(response){
             message_json(response, 3600);
-        });
+        }, data);
         $scope.content = "";
     };
     

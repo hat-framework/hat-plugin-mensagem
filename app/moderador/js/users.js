@@ -174,6 +174,10 @@ function($scope,$location,$rootScope, $timeout, $api) {
         $scope.restore();
     });
     
+    $rootScope.$on('usuario_message_setFrinedTotal', function(ev, data){
+        $scope.last = data;
+    });
+    
     $rootScope.$on('usuario_message_setFeatures', function(ev, data){
         if(typeof data.MENSAGEM_FULL_CHAT === 'undefined' || data.MENSAGEM_FULL_CHAT === false){
             $scope.hideForm = true;
