@@ -1,14 +1,14 @@
 <div ng-controller="usuario_mensagem_usersCTRL" ng-hide="hideall">
     <div style='border:1px solid transparent;'>
-        <button class="col-lg-6 btn" ng-click="setUsers()" ng-class="{'btn-primary':(last === 'users')}">Usuários</button>
-        <button class="col-lg-6 btn" ng-click="setGroups()" ng-class="{'btn-primary':(last === 'groups')}">Grupos</button>
+        <button class="col-lg-6 btn" ng-click="setUsers(lastUser)"   ng-class="{'btn-primary':(useractive)}">Usuários</button>
+        <button class="col-lg-6 btn" ng-click="setGroups(lastGroup)" ng-class="{'btn-primary':(!useractive)}">Grupos</button>
     </div>
     <div class="clearfix"></div>
     <div style="margin: 8px 0 8px 0;">
         <input type="text" 
                placeholder="Buscar Usuários" 
                class="form-control" 
-               ng-show="(last === 'users' && !hideForm)"
+               ng-show="(useractive && !hideForm)"
                ng-model="search"
                style="margin-top: 5px;"
         />
@@ -19,15 +19,21 @@
                      'label-warning':group.unread,
                      'active'       :(isActive(group)) 
                  }"
-                 ng-click="current(group)"
+                 ng-click="setCurrent(group)"
                  style="cursor: pointer;"
             >
                 <a>
-                    <span class="list-group-item-heading">{{getName(group)}}</span>
+                    <span class="list-group-item-heading">{{getData('name',group)}}</span>
                     <span class="badge" ng-hide="!group.unread">{{group.unread}}</span>
                 </a>
             </li>
         </ul>
-        <button ng-click="loadMore()" ng-hide="hideButton()" class="span11">Mais Usuários</button>
+        <div ng-hide="!useractive">
+            <div>Página atual: {{page}}</div>
+            <button ng-click="loadPage(1)"      ng-class="{'disabled':(page===1    ||busy)}"                class="btn btn-success col-lg-3">First</button>
+            <button ng-click="loadPage(page-1)" ng-class="{'disabled':(page===1    ||busy)}"                class="btn btn-success col-lg-3"><i class="fa fa-arrow-circle-left"></i></button>
+            <button ng-click="loadPage(page+1)" ng-class="{'disabled':(page=== last||busy)}"                class="btn btn-success col-lg-3"><i class="fa fa-arrow-circle-right"></i></button>
+            <button ng-click="loadPage(last)"   ng-class="{'disabled':(last == 0 || page=== last || busy)}" class="btn btn-success col-lg-3">Last</button>
+        </div>
     </div>
 </div>

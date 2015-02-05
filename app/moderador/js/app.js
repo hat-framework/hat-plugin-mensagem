@@ -1,10 +1,16 @@
 'use strict';
-var usuario_messageApp = angular.module('usuario_messageApp', ['ngSanitize', 'angular-redactor'])
-.filter('fromNow', function() {
-    return function(date) {
-      return moment(date).fromNow();
-    };
-});
+var usuario_messageApp = angular.module('usuario_messageApp', ['globalApp', 'ngSanitize', 'angular-redactor']);
+usuario_messageApp.filter('fromNow', function() {return function(date) {return moment(date).fromNow();};});
+
+usuario_messageApp.config(['$apiProvider', function ($apiProvider) {
+    $apiProvider.concatInUrl("&ajax=1");
+    $apiProvider.cacheList(true);
+    $apiProvider.registerServices({
+        'msg_contact_list'  :{type:'list' , 'urltype':'common', 'url':'mensagem/mensagem/getUserContactList'},
+        'msg_search_user'   :{type:'list' , 'urltype':'common', 'url':'mensagem/mensagem/searchUser'}
+    });
+}]);
+
 usuario_messageApp.factory('getUrlVars', [function() {
    return function() {
         var vars = {};

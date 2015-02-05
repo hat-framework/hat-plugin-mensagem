@@ -1,85 +1,119 @@
 'use strict';
-usuario_messageApp.controller('usuario_mensagem_usersCTRL',['$scope','$http','$location','$rootScope', '$timeout','getUrlVars',
-function($scope,$http,$location,$rootScope, $timeout, getUrlVars) {
-    if(typeof $scope.hideall !== 'undefined'){return;}
-    $scope.friends       = [];
-    $scope.hideForm      = true;
-    $scope.hideall       = true;
-    $scope.groups        = [];
-    $scope.hideGroupForm = true;
-    $scope.busy          = false;
-    $scope.stop          = false;
-    $scope.hideMore      = false;
-    $scope.busySearch    = false;
-    $scope.page          = 1;
-    $scope.search        = '';
-    $scope.user_url      = window.location.protocol+"//"+window.location.host+"/usuario/login/show";
-    $scope.activeid      = "";
-    $scope.currentGroup = function(group){
-        if(typeof group.usuario_perfil_cod === 'undefined'){console.log(group);return;}
-        var fakeuser = {cod_usuario: 'group_'+group.usuario_perfil_cod, user_name:group.usuario_perfil_nome};
-        $location.path('group/'+group.usuario_perfil_cod);
-        $scope.activeid = group.usuario_perfil_cod;
+usuario_messageApp.controller('usuario_mensagem_usersCTRL',[
+    '$scope','$location','$rootScope', '$timeout','$api',
+function($scope,$location,$rootScope, $timeout, $api) {
+    if(typeof $scope.busy !== 'undefined'){return;}
+    $scope.busy       = false;
+    $scope.useractive = false;
+    $scope.hideForm   = false;
+    $scope.page       = 1;
+    $scope.search     = '';
+    $scope.last       = 0;
+    
+    var getType = function(param){
+        var v = $location.path().split('/');
+        if(v.length < 2){
+            return (typeof param !== 'undefined')?"":['',''];
+        }
+        var out = [];
+        out.push(v[1]);
+        out.push(v[2]);
+        return (typeof param !== 'undefined' && typeof out[param] !== 'undefined')?out[param]:out;
+    };
+    
+    var changePath = function(type,coduser){
+        $location.path(type+'/'+coduser);
+    };
+        
+    $scope.setCurrent = function(group){
+        try{
+            var type = getType(0);
+            var cod  = (type === 'user')?group.cod_usuario:group.usuario_perfil_cod;
+            changePath(type, cod);
+        }catch(e){console.log(e);}
+    };
+        
+    $scope.getData = function(type, active){
+        if(type === 'id'){
+            return (getType(0) === 'user')?active.cod_usuario:active.usuario_perfil_cod;
+        }
+        return (getType(0) === 'user')?active.user_name:active.usuario_perfil_nome;
+    };
+    
+    $scope.setGroups = function(group){
+        $scope.active     = $scope.groups;
+        $scope.useractive = false;
+        if(typeof group === 'undefined'){
+            group = (typeof $scope.lastGroup !== 'undefined')?$scope.lastGroup:$scope.groups[0];
+            if(typeof group === 'undefined'){return;}
+        }
+        $scope.lastGroup = group;
+        var fakeuser    = {cod_usuario: 'group_'+group.usuario_perfil_cod, user_name:group.usuario_perfil_nome};
         $('title').html("Grupo "+ group.usuario_perfil_nome);
         $rootScope.$emit("usuario_message_changeUser", fakeuser);
+        changePath('group',group.usuario_perfil_cod);
     };
     
-    $scope.currentUser = function(user){
-        if(typeof user.unread !== 'undefined'){delete user.unread;}
-        $location.path('user/'+user.cod_usuario);
-        $scope.activeid = user.cod_usuario;
+    $scope.setUsers = function(user){
+        $scope.active     = $scope.friends;
+        $scope.useractive = true;
+        if(typeof user === 'undefined'){
+            user = ($scope.lastUser !== 'undefined')?$scope.lastUser:$scope.friends[0];
+            if(typeof user === 'undefined'){return;}
+        }
+        $scope.lastUser = user;
         $('title').html("Conversa com "+ user.user_name);
         $rootScope.$emit("usuario_message_changeUser", user);
+        changePath('user',user.cod_usuario);
     };
     
-    $scope.hideButton = function(){
-        return $scope.busy||$scope.stop||$scope.hideMore;
+    $scope.restore = function(){
+        var type = getType(0);
+        if(type === ""){return;}
+        if(type === 'group'){return $scope.setGroups($scope.groups[0]);}
+        $scope.setUsers($scope.friends[0]);
     };
     
-    $scope.loadMore = function(){
+    $scope.isActive = function(group){
+        try{
+            var type = getType();
+            var cod  = (type[0] === 'group')? group.usuario_perfil_cod:group.cod_usuario;
+            return(type[1] == cod)?true:false; 
+        }catch(e){return false;}
+    };
+    
+    $scope.loadPage = function(page){
         if($scope.friends.length === 0){return;}
-        if(true === $scope.stop){return;}
         if(true === $scope.busy){return;}
-        
         $scope.busy = true;
-        var url = window.location.protocol+"//"+window.location.host+"/mensagem/mensagem/getUserContactList/"+$scope.page++;
-        $http({method: 'GET', url: url}).success(function(response) {
-            if(response.length === 0 || response.length < 10){$scope.stop = true;}
+        
+        if(typeof page === 'undefined'){page = 1;}
+        if(page < 1){page = 1;}
+        if(page > $scope.last && $scope.last > 0){page = $scope.last;}
+        $scope.page = page;
+        page--;
+        $api.execute('msg_contact_list', function(response){
+            $scope.busy    = false;
+            if(typeof response === 'undefined' || response.length === 0){
+                $scope.page --;
+                $scope.last = $scope.page; 
+                return;
+            }
+            if(response.length < 10){$scope.last = $scope.page;}
+            
+            $scope.friends = [];
             for(var i in response){
                 $scope.friends.push(response[i]);
             }
-            $scope.busy = false;
-        });
+            $scope.active = $scope.friends;
+            $scope.setUsers($scope.active[0]);
+        }, ''+page);
     };
     
-    $scope.setGroups = function(){
-        $scope.active   = $scope.groups;
-        $scope.last     = 'groups';
-        $scope.hideMore = true;
-    };
     
-    $scope.setUsers = function(){
-        $scope.active   = $scope.friends;
-        $scope.last     = 'users';
-        $scope.hideMore = false;
-    };
-    
-    $scope.current = function(active){
-        if($scope.last === 'users'){
-            $scope.currentUser(active);
-        }else{
-            $scope.currentGroup(active);
-        }
-    };
-    
-    $scope.getId = function(active){
-        return ($scope.last === 'users')?active.cod_usuario:active.usuario_perfil_cod;
-    };
-    
-    $scope.getName = function(active){
-        return ($scope.last === 'users')?active.user_name:active.usuario_perfil_nome;
-    };
-    
+    /*************************
+           Watchers
+     *************************/    
     $scope.$watch('search', function(newValue, oldValue) {
         if($scope.search.length === 0){
             $scope.setUsers();
@@ -92,23 +126,45 @@ function($scope,$http,$location,$rootScope, $timeout, getUrlVars) {
         
         $scope.busySearch = true;
         $timeout(function(){   //Set timeout
-            var url = window.location.protocol+"//"+window.location.host+"/index.php?ajax=true&url=mensagem/mensagem/searchUser&q="+$scope.search;
-            $http({method: 'GET', url: url}).success(function(response) {
+            $api.execute('msg_contact_list', function(response){
                 $scope.active = response;
                 $scope.busySearch = false;
-            });
+            }, "&q="+$scope.search);
         },300);
     }, true);
     
+    $scope.$watch(function() {
+        return $location.path();
+    },function(val){
+        try{
+            var data   = getType();
+            var user   = '';
+            var key    = (data[0] === 'user')?'cod_usuario':'usuario_perfil_cod';
+            var list   = (data[0] === 'user')?$scope.friends:$scope.groups;
+            if(data[1] === ""){return;}
+            for(var i in list){
+                if(list[i][key] != data[1]){continue;}
+                user = list[i];
+                break;
+            }
+            if(user === ''){return;}
+            if(data[0] === 'group'){return $scope.setGroups(user);}
+            $scope.setUsers(user);
+        }catch(e){}
+    });
+    /*************************
+           Inicialização
+     *************************/    
     $rootScope.$on('usuario_message_setFriendList', function(ev, data){
         $scope.friends  = data;
-        $scope.hideForm = (data.length >= 10)?false:true;
-        if($scope.friends.length < 10){$scope.stop = true;}       
+        if(typeof $scope.friends[0] !== 'undefined'){
+            changePath('user', $scope.friends[0].cod_usuario);
+        }
         $scope.restore(); 
     });
     
     $rootScope.$on('usuario_message_setGroups', function(ev, data){
-        $scope.groups  = data;
+        $scope.groups        = data;
         $scope.hideGroupForm = (data.length > 10)?false:true;
         $scope.restore();
     });
@@ -118,54 +174,5 @@ function($scope,$http,$location,$rootScope, $timeout, getUrlVars) {
             $scope.hideForm = true;
         }
     });
-    
-    $scope.isActive = function(group){
-        if($scope.activeid != $scope.getId(group)){return false;}
-        var type = $scope.getType();
-        if(type[0] === 'group'){
-            return(typeof group.usuario_perfil_cod !== 'undefined')?true:false;
-        }
-        return(typeof group.cod_usuario !== 'undefined')?true:false;
-    };
-    
-    $scope.$watch(function() {
-        return $location.path();
-     }, function(val){
-        $scope.restore();
-     });
-     
-     $scope.getType = function(){
-        var v = $location.path().split('/');
-        if(v.length < 2){return {};}
-        var out = [];
-        out.push(v[1]);
-        out.push(v[2]);
-        return out;
-    };
-    
-    $scope.restore = function(){
-        if(typeof $scope.friends[0] === 'undefined'){return;}
-        if(typeof $scope.groups[0] === 'undefined'){return;}
-        var data = $scope.getType();
-        var key = 'usuario_perfil_cod';
-        if(typeof data[0] === 'undefined'){
-            data[0]       = 'user';
-            $scope.active = $scope.friends;
-        }
-        
-        if(data[0] === 'user'){
-            key = 'cod_usuario';
-            $scope.setUsers();
-        }
-        else{$scope.setGroups();}
-        for(var i in $scope.active){
-            if(data[1] != $scope.active[i][key]){continue;}
-            (data[0] === 'group')?$scope.currentGroup($scope.active[i]):$scope.currentUser($scope.active[i]);
-            $scope.hideall = false;
-            return;
-        }
-        $scope.currentUser($scope.friends[0]);
-        $scope.hideall = false;
-    };
      
 }]);
