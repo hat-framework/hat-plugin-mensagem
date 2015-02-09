@@ -43,84 +43,36 @@ class mensagem_mensagemModel extends \classes\Model\Model{
     }
     
     public function getFriendList($cod_usuario, $page = 0){
+        $where  = "";
         $perfil = $this->uobj->getCodPerfil($cod_usuario);
-        if(in_array($perfil, array(Webmaster, Admin))){
-            return $this->getList($cod_usuario, $page);
+        if(!in_array($perfil, array(Webmaster, Admin))){
+            $where  = "cod_perfil IN('".Webmaster."','".Admin."')";
+            if($perfil == '20'){
+                $where  = "cod_perfil NOT IN('".Webmaster."','".Admin."')";
+            }
         }
-        if($perfil == '20'){
-            return $this->getList($cod_usuario, $page, "cod_perfil NOT IN('".Webmaster."','".Admin."')");
-        }
-        
-        $arr = $this->getLastInteractions($cod_usuario, $page);
-        if(!empty($arr)){
-            $where = "cod_usuario IN('".implode("','",$arr)."') OR cod_perfil IN('".Webmaster."','".Admin."')";
-            return $this->getList($cod_usuario, $page, $where);
-        }
-        return $this->getList($cod_usuario, $page, "cod_perfil IN('".Webmaster."','".Admin."')");
+        return $this->getLastInteractions($cod_usuario, $page, $where);
     }
     
     public function findUsers($cod_usuario, $q){
-        
         $where = "user_name LIKE '$q%'";
         $perfil = $this->LoadModel('usuario/login', 'uobj')->getCodPerfil($cod_usuario);
         if($perfil == '20'){
-            return $this->getList($cod_usuario, 0, "$where AND cod_perfil NOT IN('".Webmaster."','".Admin."')");
+            return $this->getLastInteractions($cod_usuario, 0, "$where AND cod_perfil NOT IN('".Webmaster."','".Admin."')");
         }
-        
-        return $this->getList($cod_usuario, 0, $where);
+        return $this->getLastInteractions($cod_usuario, 0, $where);
     }
     
-    private function getList($cod_usuario, $page, $where = ""){
-        $limit   = $this->limit;
-        $offsset = $limit * $page;
-        $wh      = "cod_usuario != '$cod_usuario'";
-        $where   = ($where === "")?$wh:"$wh AND ($where)";
-        $arr     = $this->getLastInteractions($cod_usuario, $page);
-        $list    = $this->uobj->selecionar(array('cod_usuario', 'user_name', 'cod_perfil'), $where, $limit, $offsset);
-        $out     = array();
-        $findqtd = array();
-        foreach($arr as $cod){
-            foreach($list as $cod_list => $user){
-                if($cod !== $user['cod_usuario']){continue;}
-                $findqtd[] = $user['cod_usuario'];
-                $out[$user['cod_usuario']] = $user;
-                unset($list[$cod_list]);
-                break;
-            }
-        }
-        
-        $this->lastWhere = $where;
-        $this->getUnreadList($out,$cod_usuario,$findqtd);
-        if(empty($list)){return $out;}
-        return array_merge($out, $list);
-    }
-    
-    private function getUnreadList(&$out,$cod_usuario,$findqtd){
-        $find = implode("','",$findqtd);
-        $w    = "`from`IN('$find') AND `to`='$cod_usuario' AND visualizada='n' GROUP BY `to`";
-        $res  = $this->selecionar(array("COUNT(*) as total", "`from`"), $w);
-        foreach($res as $r){
-            $out[$r['from']]['unread'] = $r['total'];
-        }
-        $out = array_values($out);
-    }
-    
-    private function getLastInteractions($cod_usuario, $page = 0){
-        $users = array();
-        $where = "`from`='$cod_usuario' OR `to`='$cod_usuario'";
-        $this->prepareUserList('to'  , $where, $users, $page);
-        $this->prepareUserList('from', $where, $users, $page);
-        return $users;
-    }
-    
-    private function prepareUserList($col, $where, &$users, $page){
-        $limit  = 10;
-        $offset = ($page * $limit);
-        $results = $this->selecionar(array("DISTINCT `$col` as cod_usuario"), $where, $limit, $offset, "data DESC");
-        if(empty($results)){return array();}
-        foreach($results as $res){
-            $users[$res['cod_usuario']] = $res['cod_usuario'];
-        }
+    private function getLastInteractions($cod_usuario, $page = 0, $where = ""){
+        $w               = "cod_usuario !='$cod_usuario' ";     
+        $wh              = ($where === "")?"$w":"$w AND ($where)";
+        $limit           = 10;
+        $offset          = ($page * $limit);
+        $this->lastWhere = $wh;
+        $this->join('mensagem/mensagem', 'cod_usuario', '`to`', 'LEFT', 'usuario/login');
+        return $this->uobj->selecionar(array(
+            'DISTINCT cod_usuario', 'cod_perfil','user_name'
+        ), "(`from`='$cod_usuario' AND `to`!='$cod_usuario') OR $wh", $limit, $offset, "$this->tabela.data DESC");
     }
     
     public function LoadUserTalk($from, $to = "", $page = 0){
