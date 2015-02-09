@@ -35,9 +35,8 @@
                  ng-click="setCurrent(group)"
                  style="cursor: pointer;"
             >
-                <a>
+                <a id="a_messages_{{getId(group)}}">
                     <span class="list-group-item-heading">{{getData('name',group)}}</span>
-                    <span class="badge" ng-hide="!group.unread">{{group.unread}}</span>
                 </a>
             </li>
         </ul>

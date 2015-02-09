@@ -45,6 +45,7 @@ function($scope,$http,$rootScope, $sce) {
         var link    = $scope.sender.cod_usuario+"/"+$scope.page++;
         var url     = window.location.protocol+"//"+window.location.host+"/index.php?ajax=true&url=mensagem/mensagem/conversa/"+link+"&type=user";
         $http({method: 'GET', url: url}).success(function(response) {
+            $('#a_messages > .badge').html('');
             if(response.length === 0 || response.length < 10){$scope.stop = true;}
             for(var i in response){
                 $scope.messages.push(response[i]);

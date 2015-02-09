@@ -67,7 +67,7 @@ class mensagemController extends classes\Controller\CController{
         if($this->typeIsUser()){
             $page = (isset($this->vars[1]))?$this->vars[1]:"0";
             $arr  = $this->model->LoadUserTalk($cod_usuario, "", $page);
-            $this->model->setRead($cod_usuario, "");
+            $this->model->setRead("", $cod_usuario);
             //print_rd($arr);
             die(json_encode($arr));
         }
@@ -83,5 +83,4 @@ class mensagemController extends classes\Controller\CController{
     public function notify(){
         $this->LoadClassFromPlugin(LINK.'/mensagemNotifier', 'mnf')->notifyAll();
     }
-    
 }

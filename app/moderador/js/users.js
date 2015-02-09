@@ -28,9 +28,17 @@ function($scope,$location,$rootScope, $timeout, $api) {
     $scope.setCurrent = function(group){
         try{
             var type = getType(0);
-            var cod  = (type === 'user')?group.cod_usuario:group.usuario_perfil_cod;
+            var cod  = $scope.getId(group);
+            $('#a_messages_'+cod+ ' > .badge').html('');
             changePath(type, cod);
         }catch(e){console.log(e);}
+    };
+        
+    $scope.getId = function(group){
+        try{
+            var type = getType(0);
+            return (type === 'user')?group.cod_usuario:group.usuario_perfil_cod;
+        }catch(e){console.log(e); return '';}
     };
         
     $scope.getData = function(type, active){
@@ -107,6 +115,13 @@ function($scope,$location,$rootScope, $timeout, $api) {
             }
             $scope.active = $scope.friends;
             $scope.setUsers($scope.active[0]);
+            try{
+                console.log('nhaaa');
+                verifyNotifications(function(response){
+                    console.log(response);
+                });
+            }catch(e){console.log('verifyNotifications não instanciado!', e);}
+            
         }, ''+page);
     };
     
@@ -174,7 +189,7 @@ function($scope,$location,$rootScope, $timeout, $api) {
         $scope.restore();
     });
     
-    $rootScope.$on('usuario_message_setFrinedTotal', function(ev, data){
+    $rootScope.$on('usuario_message_setFriendTotal', function(ev, data){
         $scope.last = data;
     });
     

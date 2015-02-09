@@ -13,7 +13,7 @@ class mensagem_mensagemModel extends \classes\Model\Model{
     
     public function getGroups($cod_usuario){
         $this->LoadModel('usuario/perfil', 'perf');
-        $perfil = usuario_loginModel::CodPerfil();
+        $perfil = $this->uobj->getCodPerfil($cod_usuario);
         $where  = "";
         if(!in_array($perfil, array(Webmaster, Admin))){
             //if(false === getBoleanConstant('MENSAGEM_ANY_USER')){return array();}
@@ -35,10 +35,9 @@ class mensagem_mensagemModel extends \classes\Model\Model{
             $this->getFriendList($cod_usuario);
             if($this->lastWhere === ""){return 1;}
         }
-        $total = $this->getCount($this->lastWhere);
+        $total = $this->uobj->getCount($this->lastWhere);
         if($this->limit < 1){$this->limit = 1;}
         $response = ceil($total/$this->limit);
-        $response++;
         if($response < 0){$response = 1;}
         return $response;
     }
@@ -129,22 +128,7 @@ class mensagem_mensagemModel extends \classes\Model\Model{
         $offset = $limit * $page;
         $from   = $this->antinjection($from);
         $to     = $this->antinjection($to);
-        $where  = "(`from`='$from' OR `to`='$from')";
-        
-        /*if($to !== ""){
-            $type   = substr($to, 0, 5);
-            $where  = "(`from`='$from' AND `to`='$to') OR (`from`='$to' AND `to`='$from')";
-            if(in_array($type, array('todos', 'group'))){
-                $data = "";
-                //limita a visualização dos grupos apenas para a data após o ingresso do usuário no sistema
-                if(true === getBoleanConstant("MENSAGEM__LIMIT_DATA")){
-                    $user   = $this->uobj->getItem($from, "", false, array('user_criadoem'));
-                    $data   = ($user['user_criadoem'] === "")?"":" AND data >= '{$user['user_criadoem']}'";
-                }
-                $where  = "(`to`='$to') $data";
-            }
-        }*/
-        
+        $where  = "(`from`='$from' OR `to`='$from')";     
         
         $this->db->Join($this->tabela, 'usuario as u1',array('`from`'), array('cod_usuario'), "LEFT");
         $this->db->Join($this->tabela, 'usuario as u2', array('`to`'), array('cod_usuario'), "LEFT");
@@ -165,8 +149,11 @@ class mensagem_mensagemModel extends \classes\Model\Model{
         
         $this->LoadModel('notificacao/notifycount', 'nnc', false);
         if(!isset($this->nnc) || $this->nnc === null){return true;}
-        $this->nnc->addNotify($to, $this->notifyName, 0);
         
+        if($to !== ''){
+            $this->nnc->dropNotify($to, "{$this->notifyName}");
+            $this->nnc->dropNotify($to, "{$this->notifyName}_{$from}");
+        }      
         return true;
     }
     
@@ -185,10 +172,12 @@ class mensagem_mensagemModel extends \classes\Model\Model{
     public function inserir($dados) {
         $bool = true;
         if(!parent::inserir($dados)){return false;}
-        if(false !== strstr($dados['to'], 'group_')){
-            $bool = $this->doCopy($dados);
-        }
-        else {$this->notificar($dados['to']);}
+        if(isset($dados['to'])){
+            if(false === strstr($dados['to'], 'group_')){
+                $this->notificar($dados['to']);
+            }
+            else {$bool = $this->doCopy($dados); }
+        }else{$this->notifyStaff($dados['from']);}
         return $bool;
     }
     
@@ -206,12 +195,20 @@ class mensagem_mensagemModel extends \classes\Model\Model{
         return $bool;
     }
     
-    private function notificar($to){
+    private function notifyStaff($from){
+        $perfis = $this->LoadModel('plugins/acesso', 'perm')->getPerfisOfPermission('mensagem_manage');
+        $out = $this->LoadModel('usuario/login', 'uobj')->getUsuariosPorPerfil($perfis, array('cod_usuario'));
+        foreach($out as $o){
+            $this->notificar($o['cod_usuario'], $from);
+        }
+    }
+    
+    private function notificar($to, $from = ''){
+        if($to === ""){return;}
         $this->LoadModel('notificacao/notifycount', 'nnc', false);
         if(!isset($this->nnc) || $this->nnc === null){return true;}
-        $not = $this->nnc->getNotify($to, $this->notifyName);
-        $count = ($not === "")?1:(int)$not  + 1;
-        $this->nnc->addNotify($to, $this->notifyName, $count);
+        $name = ($from === "")?$this->notifyName:"{$this->notifyName}_{$from}";
+        $this->nnc->addNotify($to, $name);
     }
     
     private $qtd = 5;

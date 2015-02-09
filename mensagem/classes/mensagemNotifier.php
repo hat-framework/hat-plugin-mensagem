@@ -35,7 +35,7 @@ class mensagemNotifier extends classes\Classes\Object{
         if(!empty($groups)){
             $gr    = implode("','",$groups);
             $this->Notify("cod_perfil NOT IN('$gr')");
-            $this->join('usuario/login', '`to`', 'cod_usuario');
+            $this->umss->join('usuario/login', '`to`', 'cod_usuario');
             $where = "cod_perfil NOT IN('$gr') AND( $where )";
         }
     }
