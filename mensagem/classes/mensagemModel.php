@@ -51,33 +51,38 @@ class mensagem_mensagemModel extends \classes\Model\Model{
                 $where  = "cod_perfil NOT IN('".Webmaster."','".Admin."')";
             }
         }
-        return $this->getLastInteractions($cod_usuario, $page, $where);
+        //$this->limit=1000;
+        $out = $this->getLastInteractions($cod_usuario, $page, $where);
+        //print_rrh($out);
+        //die($this->db->getSentenca());
+        return $out;
     }
     
-    public function findUsers($cod_usuario, $q){
+    public function findUsers($cod_usuario, $q, $page = 0){
         $where = "user_name LIKE '$q%'";
-        $perfil = $this->LoadModel('usuario/login', 'uobj')->getCodPerfil($cod_usuario);
+        $perfil = $this->uobj->getCodPerfil($cod_usuario);
         if($perfil == '20'){
-            return $this->getLastInteractions($cod_usuario, 0, "$where AND cod_perfil NOT IN('".Webmaster."','".Admin."')");
+            $where .= " AND cod_perfil NOT IN('".Webmaster."','".Admin."')";
         }
-        return $this->getLastInteractions($cod_usuario, 0, $where);
+        
+        $offset = ($page * $this->limit);
+        return $this->uobj->selecionar(array('cod_usuario', 'cod_perfil','user_name'), $where, $this->limit, $offset, "user_name ASC");
     }
     
     private function getLastInteractions($cod_usuario, $page = 0, $where = ""){
         $w               = "cod_usuario !='$cod_usuario' ";     
         $wh              = ($where === "")?"$w":"$w AND ($where)";
-        $limit           = 10;
-        $offset          = ($page * $limit);
+        $offset          = ($page * $this->limit);
         $this->lastWhere = $wh;
-        $this->join('mensagem/mensagem', 'cod_usuario', '`to`', 'LEFT', 'usuario/login');
-        return $this->uobj->selecionar(array(
-            'DISTINCT cod_usuario', 'cod_perfil','user_name'
-        ), "(`from`='$cod_usuario' AND `to`!='$cod_usuario') OR $wh", $limit, $offset, "$this->tabela.data DESC");
+        $this->join('mensagem/mensagem', 'cod_usuario', '`from`', 'LEFT', 'usuario/login');
+        $out = $this->uobj->selecionar(array(
+            'DISTINCT cod_usuario', 'cod_perfil','user_name'/*, 'data', '`from`', '`to`'*/
+        ), $wh, $this->limit, $offset, "$this->tabela.data DESC, user_name DESC");
+        return $out;
     }
     
     public function LoadUserTalk($from, $to = "", $page = 0){
-        $limit  = 10;
-        $offset = $limit * $page;
+        $offset = $this->limit * $page;
         $from   = $this->antinjection($from);
         $to     = $this->antinjection($to);
         $where  = "(`from`='$from' OR `to`='$from')";     
@@ -86,7 +91,7 @@ class mensagem_mensagemModel extends \classes\Model\Model{
         $this->db->Join($this->tabela, 'usuario as u2', array('`to`'), array('cod_usuario'), "LEFT");
         $var    = $this->selecionar(
                 array('mensagem', '`from`', '`to`', 'data', 'visualizada', 'u1.user_name as fromname', 'u2.user_name as toname'), 
-                $where, $limit, $offset, "data DESC"
+                $where, $this->limit, $offset, "data DESC"
         );
         return $var;
     }

@@ -116,7 +116,6 @@ function($scope,$location,$rootScope, $timeout, $api) {
             $scope.active = $scope.friends;
             $scope.setUsers($scope.active[0]);
             try{
-                console.log('nhaaa');
                 verifyNotifications(function(response){
                     console.log(response);
                 });
